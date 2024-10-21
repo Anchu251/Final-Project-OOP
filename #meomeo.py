@@ -179,20 +179,20 @@ class Game2048(GameMode):
         return colors.get(value, '#faf8ef')
 
     def key_pressed(self, event):
-        if event.keysym == 'Up':
+        if event.keysym in ['Up','w', 'W']:
             changed = self._board.move_up()
-        elif event.keysym == 'Down':
+        elif event.keysym in ['Down', 's','S']:
             changed = self._board.move_down()
-        elif event.keysym == 'Left':
+        elif event.keysym in ['Left', 'a', 'A']:
             changed = self._board.move_left()
-        elif event.keysym == 'Right':
+        elif event.keysym in ['Right', 'd', 'D']:
             changed = self._board.move_right()
         else:
             return
         if changed:
             self._board.add_new_tile()
-        self.update_grid_ui()
-        state = self._board.check_state()
+            self.update_grid_ui()
+            state = self._board.check_state()
         if state == 'WON':
             self.show_game_over("Chúc mừng! Bạn đã thắng!")
         elif state == 'LOST':
@@ -293,20 +293,20 @@ class Game2048EasyMode(Game2048):
         self.update_grid_ui() 
 
     def key_pressed(self, event):
-        if event.keysym == 'Up':
+        if event.keysym in ['Up','w','W'] :
             changed = self._board.move_up()
-        elif event.keysym == 'Down':
+        elif event.keysym in ['Down','s','S']:
             changed = self._board.move_down()
-        elif event.keysym == 'Left':
+        elif event.keysym in ['Left','a','A']:
             changed = self._board.move_left()
-        elif event.keysym == 'Right':
+        elif event.keysym in ['Right','d','D']:
             changed = self._board.move_right()
         else:
             return
         if changed:
             self.add_new_tile()  
             self.update_grid_ui() 
-        state = self._board.check_state()  
+            state = self._board.check_state()  
         if state == 'WON':
             self.show_game_over("Chúc mừng! Bạn đã thắng!")  
         elif state == 'LOST':
@@ -329,13 +329,13 @@ class Game2048CompetitionMode(Game2048):
 
     def key_pressed(self, event):
         changed = False
-        if event.keysym == 'Up':
+        if event.keysym in ['Up','w','W']:
             changed = self._board.move_up()
-        elif event.keysym == 'Down':
+        elif event.keysym in ['Down','s','S']:
             changed = self._board.move_down()
-        elif event.keysym == 'Left':
+        elif event.keysym in ['Left','a','A']:
             changed = self._board.move_left()
-        elif event.keysym == 'Right':
+        elif event.keysym in ['Right','d','D']:
             changed = self._board.move_right()
         else:
             return
@@ -386,24 +386,26 @@ class ModeSelection:
         self._root.destroy()  
         root = tk.Tk()
         game = Game2048(root, self.user, 'Normal Mode')
-        game.start()
+        game.start_game()
         root.mainloop()
 
     def start_easy_mode(self):
         self._root.destroy()  
         root = tk.Tk()
         game = Game2048EasyMode(root, self.user, 'Easy Mode')
-        game.start()
+        game.start_game()
         root.mainloop()
 
     def start_competition_mode(self):
         self._root.destroy()  
         root = tk.Tk()
         game = Game2048CompetitionMode(root, self.user, 'Competition Mode') 
-        game.start() 
+        game.start_game() 
         root.mainloop()
+
     def exit_game(self):
         self._root.destroy()
+
 
 class Username:
     def __init__(self, root):
