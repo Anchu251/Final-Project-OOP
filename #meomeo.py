@@ -1,6 +1,7 @@
 import tkinter as tk
 import random
 import csv
+import os
 from tkinter import messagebox
 from abc import ABC, abstractmethod
 
@@ -209,23 +210,41 @@ class Game2048(GameMode):
         return 0
     
     def save_best_score(self):
+        filename = 'best_scores.csv'
         updated = False
         rows = []
-        try:
-            with open('best_scores.csv', mode='r') as file:
+        file_exists = os.path.isfile(filename)
+        if file_exists:
+            with open(filename, mode='r') as file:
                 reader = csv.reader(file)
-                rows = list(reader)
-        except FileNotFoundError:
-            pass
-        with open('best_scores.csv', mode='w', newline ='') as file:
+                for row in reader:
+                    if row[0] == self.user.username:
+                        if self.mode == 'Normal Mode':
+                            row[1] = max(int(row[1]), self._board.get_best_score())
+                        elif self.mode == 'Easy Mode':
+                            row[2] = max(int(row[2]), self._board.get_best_score())
+                        elif self.mode == 'Competition Mode':
+                            row[3] = max(int(row[3]), self._board.get_best_score())
+                        updated = True
+                    rows.append(row)
+
+        if not file_exists:
+            rows.append(['username', 'normal_score', 'easy_score', 'competition_score'])  # Tiêu đề
+            rows.append([self.user.username, 0, 0, 0])  # Khởi tạo điểm số
+
+        with open(filename, mode='w', newline='') as file:
             writer = csv.writer(file)
             for row in rows:
-                if row[0] == self.user.username and row[1] == self.mode:
-                    row[2] = self._board.get_best_score() 
-                    updated = True
                 writer.writerow(row)
             if not updated:
-                writer.writerow([self.user.username, self.mode, self._board.get_best_score()])
+                new_row = [self.user.username, 0, 0, 0]
+                if self.mode == 'Normal Mode':
+                    new_row[1] = self._board.get_best_score()
+                elif self.mode == 'Easy Mode':
+                    new_row[2] = self._board.get_best_score()
+                elif self.mode == 'Competition Mode':
+                    new_row[3] = self._board.get_best_score()
+                writer.writerow(new_row)
 
     def show_game_over(self, message):
         replay = messagebox.askyesno("2048", f"{message}\nBạn có muốn chơi lại không?")
